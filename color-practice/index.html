@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Color Practice Lab | Joshua Amistoso</title><link rel="stylesheet" href="style.css">
+<style>.box{width:100%;min-height:160px;border-radius:10px;display:flex;align-items:center;justify-content:center;font:700 1.1rem Consolas,monospace;transition:background .15s}
+.sw{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.s{padding:30px 8px;border-radius:10px;text-align:center;font:600 .8rem Consolas,monospace;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);transition:transform .2s,box-shadow .2s}
+.s:hover{transform:translateY(-6px) scale(1.07);box-shadow:0 12px 24px rgba(0,0,0,.5)}
+.preview{display:block}</style></head><body>
+<div class="titlebar"><span class="dots"><i></i><i></i><i></i></span><span>color-practice.css — Visual Studio Code</span><a href="../index.html">← Back to portfolio</a></div>
+<header><h1>Color <em>Practice</em> Lab</h1><p class="sub">My CSS color manipulation practice by Joshua Amistoso, BSIT 2B. Drag the sliders and watch the same color appear as HSL, RGB, and HEX.</p></header>
+<main>
+<h2>HSL Mixer</h2>
+<div class="split"><div class="editor"><span class="tab">style.css</span><pre id="code"></pre></div><div class="preview"><div class="box" id="box"></div></div></div>
+<div class="controls">
+<label>hue: <b id="o1"></b><input id="h" type="range" min="0" max="360" value="220"></label>
+<label>saturation: <b id="o2"></b><input id="s" type="range" min="0" max="100" value="80"></label>
+<label>lightness: <b id="o3"></b><input id="l" type="range" min="0" max="100" value="50"></label>
+<label>opacity: <b id="o4"></b><input id="a" type="range" min="0" max="1" step="0.05" value="1"></label></div>
+
+<h2>Color Harmony from the Mixer</h2><div class="sw" id="harm"></div>
+
+<h2>Gradient Builder</h2>
+<div class="split"><div class="editor"><span class="tab">gradient.css</span><pre id="gcode"></pre></div>
+<div class="preview"><div class="box" id="gbox"></div></div></div>
+<div class="controls"><label>color 1<input id="c1" type="color" value="#1d4ed8"></label><label>color 2<input id="c2" type="color" value="#f59e0b"></label><label>angle: <b id="o5"></b><input id="ang" type="range" min="0" max="360" value="90"></label></div>
+
+<h2>Lessons</h2><div id="lessons"></div>
+</main><footer>Color Practice Lab · Joshua M. Amistoso · BSIT 2B</footer>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function hl(css){return css.split("\n").map((l,i)=>{const m=l.match(/^(\s*)([\w-]+):\s*(.*);$/);let b;
+ if(l.trim().startsWith("/*"))b=`<span class="c">${esc(l)}</span>`;else b=m?`${m[1]}<span class="p">${m[2]}</span>: <span class="v">${esc(m[3])}</span>;`:`<span class="s">${esc(l)}</span>`;
+ return `<span class="ln">${i+1}</span>${b}`}).join("\n")}
+function toRGB(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return[0,8,4].map(n=>Math.round(f(n)*255))}
+const hex=r=>"#"+r.map(x=>x.toString(16).padStart(2,"0")).join("");
+function mix(){const h=+$("h").value,s=+$("s").value,l=+$("l").value,a=+$("a").value;
+ $("o1").textContent=h+"°";$("o2").textContent=s+"%";$("o3").textContent=l+"%";$("o4").textContent=a;
+ const r=toRGB(h,s,l),hs=`hsl(${h}, ${s}%, ${l}%)`;
+ $("box").style.background=a<1?`hsla(${h}, ${s}%, ${l}%, ${a})`:hs;$("box").style.color=l>60?"#111":"#fff";$("box").textContent=hex(r);
+ $("code").innerHTML=hl(`.box {\n  background: ${hs};\n  /* same color as RGB */\n  background: rgb(${r.join(", ")});\n  /* same color as HEX */\n  background: ${hex(r)};\n  opacity: ${a};\n}`);
+ $("harm").innerHTML=[["base",0],["complementary",180],["triadic 1",120],["triadic 2",240],["analogous -30",-30],["analogous +30",30]].map(([n,d])=>{const hh=(h+d+360)%360,c=`hsl(${hh}, ${s}%, ${l}%)`;return `<div class="s" style="background:${c}">${n}<br>${c}</div>`}).join("")}
+["h","s","l","a"].forEach(i=>$(i).addEventListener("input",mix));mix();
+function grad(){const g=`linear-gradient(${$("ang").value}deg, ${$("c1").value}, ${$("c2").value})`;$("o5").textContent=$("ang").value+"deg";$("gbox").style.background=g;$("gbox").textContent="";
+ $("gcode").innerHTML=hl(`.hero {\n  background: ${g};\n}`)}
+["c1","c2","ang"].forEach(i=>$(i).addEventListener("input",grad));grad();
+const LS=[["Named colors",["tomato","royalblue","gold","seagreen","orchid","slategray"]],
+["HEX colors",["#1d4ed8","#f59e0b","#10b981","#ef4444","#8b5cf6","#0f172a"]],
+["RGB colors",["rgb(255, 99, 71)","rgb(65, 105, 225)","rgb(46, 139, 87)","rgb(218, 112, 214)","rgb(255, 215, 0)"]],
+["RGBA transparency",["rgba(29, 78, 216, 1)","rgba(29, 78, 216, .75)","rgba(29, 78, 216, .5)","rgba(29, 78, 216, .25)"]],
+["HSL lightness steps",[15,30,45,60,75].map(x=>`hsl(220, 80%, ${x}%)`)],
+["Gradients",["linear-gradient(90deg, #1d4ed8, #f59e0b)","radial-gradient(circle, #fbbf24, #b45309)","conic-gradient(red, orange, green, blue, red)"]]];
+$("lessons").innerHTML=LS.map(([t,a],i)=>`<h3 style="color:var(--ac2);margin:20px 0 8px">${i+1}. ${t}</h3><div class="sw">${a.map(c=>`<div class="s" style="background:${c}">${c}</div>`).join("")}</div>`).join("");
+</script></body></html>

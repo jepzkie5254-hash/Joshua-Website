@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Font Practice Lab | Joshua Amistoso</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="titlebar"><span class="dots"><i></i><i></i><i></i></span><span>font-practice.css — Visual Studio Code</span><a href="../index.html">← Back to portfolio</a></div>
+<header><h1>Font <em>Practice</em> Lab</h1><p class="sub">My CSS typography practice by Joshua Amistoso, BSIT 2B. Change the controls and watch the code and preview update together.</p></header>
+<main>
+<h2>Playground</h2>
+<div class="split"><div class="editor"><span class="tab">style.css</span><pre id="code"></pre></div>
+<div class="preview"><p id="sample" style="margin:0">The quick brown fox jumps over the lazy dog. Joshua Amistoso 0123456789</p></div></div>
+<div class="controls">
+<label>font-family<select id="fam"><option>Georgia, serif</option><option>Arial, sans-serif</option><option>"Courier New", monospace</option><option>"Brush Script MT", cursive</option><option>Impact, sans-serif</option><option>"Trebuchet MS", sans-serif</option><option>Verdana, sans-serif</option><option>"Times New Roman", serif</option></select></label>
+<label>font-size: <b id="o1"></b><input id="size" type="range" min="12" max="72" value="28"></label>
+<label>font-weight: <b id="o2"></b><input id="wt" type="range" min="100" max="900" step="100" value="400"></label>
+<label>letter-spacing: <b id="o3"></b><input id="ls" type="range" min="-2" max="20" value="0"></label>
+<label>line-height: <b id="o4"></b><input id="lh" type="range" min="1" max="2.5" step="0.1" value="1.5"></label>
+<label>font-style<select id="st"><option>normal</option><option>italic</option></select></label>
+<label>text-transform<select id="tt"><option>none</option><option>uppercase</option><option>lowercase</option><option>capitalize</option></select></label>
+<label>text-decoration<select id="td"><option>none</option><option>underline</option><option>line-through</option><option>overline</option></select></label>
+<label>color<input id="col" type="color" value="#ffffff"></label></div>
+
+<h2>Lessons</h2><div class="lessons" id="lessons"></div>
+</main><footer>Font Practice Lab · Joshua M. Amistoso · BSIT 2B</footer>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+function hl(css){return css.split("\n").map((l,i)=>{const m=l.match(/^(\s*)([\w-]+):\s*(.*);$/);
+ const b=m?`${m[1]}<span class="p">${m[2]}</span>: <span class="v">${esc(m[3])}</span>;`:`<span class="s">${esc(l)}</span>`;
+ return `<span class="ln">${i+1}</span>${b}`}).join("\n")}
+function play(){
+ const P={"font-family":$("fam").value,"font-size":$("size").value+"px","font-weight":$("wt").value,"letter-spacing":$("ls").value+"px","line-height":$("lh").value,"font-style":$("st").value,"text-transform":$("tt").value,"text-decoration":$("td").value,"color":$("col").value};
+ $("o1").textContent=P["font-size"];$("o2").textContent=P["font-weight"];$("o3").textContent=P["letter-spacing"];$("o4").textContent=P["line-height"];
+ const s=$("sample");s.style.cssText="margin:0;"+Object.entries(P).map(([k,v])=>k+":"+v).join(";");
+ $("code").innerHTML=hl(".sample {\n"+Object.entries(P).map(([k,v])=>`  ${k}: ${v};`).join("\n")+"\n}")}
+document.querySelectorAll(".controls select,.controls input").forEach(e=>e.addEventListener("input",play));play();
+const L=[
+["Serif family","font-family: Georgia, serif;","Joshua Amistoso"],
+["Sans-serif family","font-family: Arial, sans-serif;","Joshua Amistoso"],
+["Monospace family","font-family: 'Courier New', monospace;","Joshua Amistoso"],
+["Cursive family","font-family: 'Brush Script MT', cursive;\nfont-size: 30px;","Joshua Amistoso"],
+["Font sizes","font-size: 14px;","14px small text"],
+["Big heading","font-size: 40px;\nfont-weight: 800;","Heading"],
+["Light weight","font-weight: 300;","Weight 300"],
+["Bold weight","font-weight: 700;","Weight 700"],
+["Italic","font-style: italic;","Italic text"],
+["Uppercase","text-transform: uppercase;\nletter-spacing: 4px;","spaced caps"],
+["Underline","text-decoration: underline;\ntext-decoration-color: gold;","Underlined"],
+["Strikethrough","text-decoration: line-through;","Crossed out"],
+["Small caps","font-variant: small-caps;","Small caps text"],
+["Text shadow","font-size: 32px;\nfont-weight: 800;\ntext-shadow: 3px 3px 0 #007acc;","Shadow"],
+["Gradient text","font-size: 32px;\nfont-weight: 800;\nbackground: linear-gradient(90deg, #5b8cff, #fbbf24);\n-webkit-background-clip: text;\ncolor: transparent;","Gradient"],
+["Line height","line-height: 2;\nfont-size: 15px;","Tall line height gives the text room to breathe on every line."]];
+$("lessons").innerHTML=L.map(([t,c,x],i)=>`<div class="lesson"><h3>${i+1}. ${t}</h3><div class="demo" style="${c.replace(/\n/g," ").replace(/"/g,"'")}">${x}</div><pre>${hl(".demo {\n"+c.split("\n").map(l=>"  "+l).join("\n")+"\n}")}</pre></div>`).join("");
+</script></body></html>
